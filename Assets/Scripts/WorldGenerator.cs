@@ -38,12 +38,11 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    public enum gridSpace { empty, floor, wall, darkGrass, err, obj3x3, obj2x2, obj1x1, used3x3, used2x2 };
-    public gridSpace[,] grid;
-    int roomHeight, roomWidth;
     Vector2 roomSizeWorldUnits = new Vector2(150, 150); // This is the size of the map
     float[,] noiseMap = new float[150, 150]; // This is where we keep the perlin noise. Used for adding grass
     float worldUnitsInOneGridCell = 1;
+
+    GridHandler newGrid = new GridHandler();
 
     struct walker
     {
@@ -88,43 +87,29 @@ public class WorldGenerator : MonoBehaviour
 
     void Setup()
     {
-        //find grid size
-        roomHeight = Mathf.RoundToInt(roomSizeWorldUnits.x / worldUnitsInOneGridCell);
-        roomWidth = Mathf.RoundToInt(roomSizeWorldUnits.y / worldUnitsInOneGridCell);
+        newGrid.SetupGrid();
 
-        // UnityEngine.Debug.Log("Room Height during setup: " + roomHeight);
-        //create grid
-        grid = new gridSpace[roomWidth, roomHeight];
         //make sure our tilemaps are clear. Can be an issue after coming from the editor
         topMap.ClearAllTiles();
         botMap.ClearAllTiles();
         darkGrassMap.ClearAllTiles();
         lightGrassMap.ClearAllTiles();
-        //set grid's default state
-        for (int x = 0; x < roomWidth; x++)
-        {
-            for (int y = 0; y < roomHeight; y++)
-            {
-                //make every cell "empty"
-                grid[x, y] = gridSpace.empty;
-            }
-        }
 
         //set first walker
         walkers = new List<walker>(); // init list
         walker newWalker = new walker(); //create a walker
         newWalker.dir = RandomDirection();
         //find center of grid
-        Vector2 spawnPos = new Vector2(Mathf.RoundToInt(roomWidth / 2.0f),
-                                    Mathf.RoundToInt(roomHeight / 2.0f));
+        Vector2 spawnPos = new Vector2(Mathf.RoundToInt(newGrid.roomWidth / 2.0f),
+                                    Mathf.RoundToInt(newGrid.roomHeight / 2.0f));
         newWalker.pos = spawnPos;
         //add walker to our list
         walkers.Add(newWalker);
 
         //Generate noisemap
-        for (int xIndex = 0; xIndex < roomWidth; xIndex++)
+        for (int xIndex = 0; xIndex < newGrid.roomWidth; xIndex++)
         {
-            for (int yIndex = 0; yIndex < roomHeight; yIndex++)
+            for (int yIndex = 0; yIndex < newGrid.roomHeight; yIndex++)
             {
                 // Mathf.PerlinNoise requires floats as input
                 float sampleX = xIndex / noiseScale;
@@ -137,19 +122,20 @@ public class WorldGenerator : MonoBehaviour
     void CreateFloors()
     {
         int iterations = 0; // Just want to keep track of how many times we've looped so we don't get an infinite loop. This is just in case
+        GridHandler.gridSpace floorTile = GridHandler.gridSpace.floor;
         do
         {
             //create floor at position of every walker
             foreach (walker myWalker in walkers)
             {
-                grid[(int)myWalker.pos.x, (int)myWalker.pos.y] = gridSpace.floor;
+                newGrid.SetTile((int)myWalker.pos.x, (int)myWalker.pos.y, floorTile);
                 //Make the path 2 tiles thick:
                 //If we're moving up or down, also create the tile to the right of the path
                 if ((int)myWalker.dir.y != 0)
-                    grid[(int)myWalker.pos.x + 1, (int)myWalker.pos.y] = gridSpace.floor;
+                    newGrid.SetTile((int)myWalker.pos.x + 1, (int)myWalker.pos.y, floorTile);
                 //If we're moving left or right, also create the tile to above the path
                 if ((int)myWalker.dir.x != 0)
-                    grid[(int)myWalker.pos.x, (int)myWalker.pos.y + 1] = gridSpace.floor;
+                    newGrid.SetTile((int)myWalker.pos.x, (int)myWalker.pos.y + 1, floorTile);
             }
             //chance: destroy walker
             int numberChecks = walkers.Count; //see how many walkers we have
@@ -198,12 +184,12 @@ public class WorldGenerator : MonoBehaviour
             {
                 walker thisWalker = walkers[i];
                 //clamp x,y to leave a 10 slot space around the edges where we can put other items
-                thisWalker.pos.x = Mathf.Clamp(thisWalker.pos.x, 10, roomWidth - 10);
-                thisWalker.pos.y = Mathf.Clamp(thisWalker.pos.y, 10, roomHeight - 10);
+                thisWalker.pos.x = Mathf.Clamp(thisWalker.pos.x, 10, newGrid.roomWidth - 10);
+                thisWalker.pos.y = Mathf.Clamp(thisWalker.pos.y, 10, newGrid.roomHeight - 10);
                 walkers[i] = thisWalker;
             }
             //check if we want to exit the loop
-            if ((float)NumberOfFloors() / (float)grid.Length > percentToFill)
+            if ((float)newGrid.NumberOfFloors() / newGrid.GetGridLength() > percentToFill)
             {
                 break;
             }
@@ -216,47 +202,47 @@ public class WorldGenerator : MonoBehaviour
         int fullSlotsCount = 0;
 
         //loop through every grid space
-        for (int x = 1; x < roomWidth - 1; x++)
+        for (int x = 1; x < newGrid.roomWidth - 1; x++)
         {
-            for (int y = 1; y < roomHeight - 1; y++)
+            for (int y = 1; y < newGrid.roomHeight - 1; y++)
             {
                 //if we find an empty spot, check the spaces around it and count how many have a floor
-                if (grid[x, y] == gridSpace.empty)
+                if (newGrid.GetTileType(x, y) == GridHandler.gridSpace.empty)
                 {
                     // Top-left
-                    if (grid[x - 1, y - 1] == gridSpace.floor)
+                    if (newGrid.GetTileType(x - 1, y - 1) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     // Above
-                    if (grid[x, y - 1] == gridSpace.floor)
+                    if (newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     // Top-right
-                    if (grid[x + 1, y + 1] == gridSpace.floor)
+                    if (newGrid.GetTileType(x + 1, y + 1) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     // Left
-                    if (grid[x - 1, y] == gridSpace.floor)
+                    if (newGrid.GetTileType(x - 1, y) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     // Right
-                    if (grid[x + 1, y] == gridSpace.floor)
+                    if (newGrid.GetTileType(x + 1, y) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     // Bottom-left
-                    if (grid[x - 1, y - 1] == gridSpace.floor)
+                    if (newGrid.GetTileType(x - 1, y - 1) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     // Bottom
-                    if (grid[x, y - 1] == gridSpace.floor)
+                    if (newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     // Bottom-Right
-                    if (grid[x + 1, y - 1] == gridSpace.floor)
+                    if (newGrid.GetTileType(x + 1, y - 1) == GridHandler.gridSpace.floor)
                         fullSlotsCount++;
 
                     if (fullSlotsCount > 6)
-                        grid[x, y] = gridSpace.floor;
+                        newGrid.SetTile(x, y, GridHandler.gridSpace.floor);
 
                     fullSlotsCount = 0;
                 }
@@ -267,43 +253,43 @@ public class WorldGenerator : MonoBehaviour
     void AddFirstGrassLayer()
     {
         //loop through every grid space. This is where we're adding the border grass
-        for (int x = 0; x < roomWidth - 1; x++)
+        for (int x = 0; x < newGrid.roomWidth - 1; x++)
         {
-            for (int y = 0; y < roomHeight - 1; y++)
+            for (int y = 0; y < newGrid.roomHeight - 1; y++)
             {
                 //if we find a floor, check the spaces around it
-                if (grid[x, y] == gridSpace.floor)
+                if (newGrid.GetTileType(x, y) == GridHandler.gridSpace.floor)
                 {
                     //if any surrounding spaces are empty, make grass
-                    if (grid[x, y + 1] == gridSpace.empty)
+                    if (newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.empty)
                     {
-                        grid[x, y] = gridSpace.darkGrass;
-                        grid[x, y + 1] = gridSpace.darkGrass;
+                        newGrid.SetTile(x, y, GridHandler.gridSpace.darkGrass);
+                        newGrid.SetTile(x, y + 1, GridHandler.gridSpace.darkGrass);
                     }
 
-                    if (grid[x, y - 1] == gridSpace.empty)
+                    if (newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.empty)
                     {
-                        grid[x, y] = gridSpace.darkGrass;
-                        grid[x, y - 1] = gridSpace.darkGrass;
+                        newGrid.SetTile(x, y, GridHandler.gridSpace.darkGrass);
+                        newGrid.SetTile(x, y - 1, GridHandler.gridSpace.darkGrass);
                     }
 
-                    if (grid[x + 1, y] == gridSpace.empty)
+                    if (newGrid.GetTileType(x + 1, y) == GridHandler.gridSpace.empty)
                     {
-                        grid[x, y] = gridSpace.darkGrass;
-                        grid[x + 1, y] = gridSpace.darkGrass;
+                        newGrid.SetTile(x, y, GridHandler.gridSpace.darkGrass);
+                        newGrid.SetTile(x + 1, y, GridHandler.gridSpace.darkGrass);
                     }
 
-                    if (grid[x - 1, y] == gridSpace.empty)
+                    if (newGrid.GetTileType(x - 1, y) == GridHandler.gridSpace.empty)
                     {
-                        grid[x, y] = gridSpace.darkGrass;
-                        grid[x - 1, y] = gridSpace.darkGrass;
+                        newGrid.SetTile(x, y, GridHandler.gridSpace.darkGrass);
+                        newGrid.SetTile(x - 1, y, GridHandler.gridSpace.darkGrass);
                     }
                 }
 
                 // Add noise-based grass
                 if (noiseMap[x, y] > 0.2f)
                 {
-                    if (grid[x, y] == gridSpace.floor)
+                    if (newGrid.GetTileType(x, y) == GridHandler.gridSpace.floor)
                     { // I don't want to draw grass outside of the level area
                         darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
                     }
@@ -311,7 +297,7 @@ public class WorldGenerator : MonoBehaviour
                 }
                 if (noiseMap[x, y] > 0.4f)
                 {
-                    if (grid[x, y] == gridSpace.floor)
+                    if (newGrid.GetTileType(x, y) == GridHandler.gridSpace.floor)
                     { // I don't want to draw grass outside of the level area
                         lightGrassMap.SetTile(new Vector3Int(x, y, 0), lightGrassTile);
                     }
@@ -324,28 +310,28 @@ public class WorldGenerator : MonoBehaviour
     {
         AssetPlacer Placer = new AssetPlacer();
 
-        Placer.grid = grid;
+        Placer.grid = newGrid;
 
         //loop through every grid space
-        for (int x = 0; x < roomWidth - 1; x++)
+        for (int x = 0; x < newGrid.roomWidth - 1; x++)
         {
-            for (int y = 0; y < roomHeight - 1; y++)
+            for (int y = 0; y < newGrid.roomHeight - 1; y++)
             {
                 //if we find a floor, check the spaces around it
-                if (grid[x, y] == gridSpace.darkGrass)
+                if (newGrid.GetTileType(x, y) == GridHandler.gridSpace.darkGrass)
                 {
                     //if any surrounding spaces are empty, place a wall there
-                    if (grid[x, y + 1] == gridSpace.empty)
-                        grid = Placer.FindLargestPossibleTile(x, y, 0, 1);
+                    if (newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.empty)
+                        Placer.FindLargestPossibleTile(newGrid, x, y, 0, 1);
 
-                    if (grid[x, y - 1] == gridSpace.empty)
-                        grid = Placer.FindLargestPossibleTile(x, y, 0, -1);
+                    if (newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.empty)
+                        Placer.FindLargestPossibleTile(newGrid, x, y, 0, -1);
 
-                    if (grid[x + 1, y] == gridSpace.empty)
-                        grid = Placer.FindLargestPossibleTile(x, y, 1, 0);
+                    if (newGrid.GetTileType(x + 1, y) == GridHandler.gridSpace.empty)
+                        Placer.FindLargestPossibleTile(newGrid, x, y, 1, 0);
 
-                    if (grid[x - 1, y] == gridSpace.empty)
-                        grid = Placer.FindLargestPossibleTile(x, y, -1, 0);
+                    if (newGrid.GetTileType(x - 1, y) == GridHandler.gridSpace.empty)
+                        Placer.FindLargestPossibleTile(newGrid, x, y, -1, 0);
                 }
             }
         }
@@ -356,35 +342,35 @@ public class WorldGenerator : MonoBehaviour
     void SpawnLevel()
     {
         //Check every cell, and spawn appropriate tile
-        for (int x = 0; x < roomWidth; x++)
+        for (int x = 0; x < newGrid.roomWidth; x++)
         {
-            for (int y = 0; y < roomHeight; y++)
+            for (int y = 0; y < newGrid.roomHeight; y++)
             {
-                switch (grid[x, y])
+                switch (newGrid.GetTileType(x, y))
                 {
-                    case gridSpace.empty:
+                    case GridHandler.gridSpace.empty:
                         break;
-                    case gridSpace.floor:
+                    case GridHandler.gridSpace.floor:
                         botMap.SetTile(new Vector3Int(x, y, 0), botTile);
                         break;
-                    case gridSpace.darkGrass:
+                    case GridHandler.gridSpace.darkGrass:
                         darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
                         botMap.SetTile(new Vector3Int(x, y, 0), botTile);
                         break;
-                    case gridSpace.wall:
+                    case GridHandler.gridSpace.wall:
                         topMap.SetTile(new Vector3Int(x, y, 0), topTile);
                         break;
-                    case gridSpace.err:
+                    case GridHandler.gridSpace.err:
                         topMap.SetTile(new Vector3Int(x, y, 0), errTile);
                         break;
-                    case gridSpace.obj3x3:
+                    case GridHandler.gridSpace.obj3x3:
                         Allprefabs.Add(Instantiate(Tile3x3, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
                         // topMap.SetTile(new Vector3Int(x, y, 0), topTile);
                         break;
-                    case gridSpace.obj2x2:
+                    case GridHandler.gridSpace.obj2x2:
                         Allprefabs.Add(Instantiate(Tile2x2, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
                         break;
-                    case gridSpace.obj1x1:
+                    case GridHandler.gridSpace.obj1x1:
                         Allprefabs.Add(Instantiate(Tile1x1, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
                         break;
                 }
@@ -408,17 +394,6 @@ public class WorldGenerator : MonoBehaviour
             default:
                 return Vector2.right;
         }
-    }
-
-    int NumberOfFloors()
-    {
-        int count = 0;
-        foreach (gridSpace space in grid)
-        {
-            if (space == gridSpace.floor)
-                count++;
-        }
-        return count;
     }
 
     void Spawn(float x, float y, GameObject toSpawn)
