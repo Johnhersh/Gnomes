@@ -84,7 +84,6 @@ public class WorldGenerator : MonoBehaviour
         AddBorders();
 
         SpawnLevel();
-        // SpawnBorderTrees();
     }
 
     void Setup()
@@ -410,10 +409,10 @@ public class WorldGenerator : MonoBehaviour
                         // topMap.SetTile(new Vector3Int(x, y, 0), topTile);
                         break;
                     case gridSpace.obj2x2:
-                        Allprefabs.Add(Instantiate(Tile2x2, new Vector3(x + 0.5f, y - 0.5f, 0), Quaternion.identity));
+                        Allprefabs.Add(Instantiate(Tile2x2, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
                         break;
                     case gridSpace.obj1x1:
-                        Allprefabs.Add(Instantiate(Tile1x1, new Vector3(x + 0.5f, y - 0.5f, 0), Quaternion.identity));
+                        Allprefabs.Add(Instantiate(Tile1x1, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
                         break;
                 }
             }

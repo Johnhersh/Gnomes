@@ -54,9 +54,20 @@ public class AssetPlacer
             if (CanPlace2x2(CheckX + (OffsetX * 2), CheckY + 1))
                 return grid;
         }
+        // If no X, we need to search up/down of the tile
+        if (OffsetX == 0)
+        {
+            // Go to the left/right
+            if (CanPlace2x2(CheckX, CheckY + (OffsetY)))
+                return grid;
 
-        // If we're here, we can't spawn a 3x3 or a 3x3 but we know the slot is empty. So spawn a 1x1
-        // grid[CheckX, CheckY] = WorldGenerator.gridSpace.obj1x1;
+            // Try one to the left, since a 2x2 can only extend to the right and we're trying to find a 2x2 that may include the original tile
+            if (CanPlace2x2(CheckX - 1, CheckY + (OffsetY)))
+                return grid;
+        }
+
+        // If we're here, we can't spawn a 3x3 or a 2x2 but we know the slot is empty. So spawn a 1x1
+        grid[CheckX + OffsetX, CheckY + OffsetY] = WorldGenerator.gridSpace.obj1x1;
         return grid;
     }
 
@@ -89,7 +100,7 @@ public class AssetPlacer
         return false;
     }
 
-
+    // Given an (X,Y) check for a 2x2 assuming the tile is in bottom-left
     bool CanPlace2x2(int CheckX, int CheckY)
     {
         WorldGenerator.gridSpace[,] TempGrid = new WorldGenerator.gridSpace[grid.GetLength(0), grid.GetLength(1)];
