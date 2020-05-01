@@ -320,33 +320,6 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    void CreateWalls()
-    {
-        //loop through every grid space
-        for (int x = 0; x < roomWidth - 1; x++)
-        {
-            for (int y = 0; y < roomHeight - 1; y++)
-            {
-                //if we find a floor, check the spaces around it
-                if (grid[x, y] == gridSpace.floor)
-                {
-                    //if any surrounding spaces are empty, place a wall there
-                    if (grid[x, y + 1] == gridSpace.empty)
-                        grid[x, y + 1] = gridSpace.wall;
-
-                    if (grid[x, y - 1] == gridSpace.empty)
-                        grid[x, y - 1] = gridSpace.wall;
-
-                    if (grid[x + 1, y] == gridSpace.empty)
-                        grid[x + 1, y] = gridSpace.wall;
-
-                    if (grid[x - 1, y] == gridSpace.empty)
-                        grid[x - 1, y] = gridSpace.wall;
-                }
-            }
-        }
-    }
-
     void AddBorders() // This is where we fill the bounding area with 1x1, 2x2 or 3x3 assets
     {
         AssetPlacer Placer = new AssetPlacer();
