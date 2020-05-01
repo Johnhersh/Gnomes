@@ -74,9 +74,6 @@ public class AssetPlacer
     // Given an (X,Y) check for a 3x3 assuming the tile is in the middle
     bool CanPlace3x3(int CheckX, int CheckY)
     {
-        WorldGenerator.gridSpace[,] TempGrid = new WorldGenerator.gridSpace[grid.GetLength(0), grid.GetLength(1)];
-        System.Array.Copy(grid, TempGrid, grid.Length);
-
         int Counter = 0;
         for (int x = -1; x < 2; x++)
         {
@@ -84,7 +81,6 @@ public class AssetPlacer
             {
                 if (grid[CheckX + x, CheckY + y] == WorldGenerator.gridSpace.empty)
                 {
-                    TempGrid[CheckX + x, CheckY + y] = WorldGenerator.gridSpace.used3x3;
                     Counter++;
                 }
             }
@@ -92,7 +88,13 @@ public class AssetPlacer
 
         if (Counter == 9)
         {
-            grid = TempGrid;
+            for (int x = -1; x < 2; x++)
+            {
+                for (int y = -1; y < 2; y++)
+                {
+                    grid[CheckX + x, CheckY + y] = WorldGenerator.gridSpace.used3x3;
+                }
+            }
             grid[CheckX, CheckY] = WorldGenerator.gridSpace.obj3x3;
             return true;
         }
@@ -103,9 +105,6 @@ public class AssetPlacer
     // Given an (X,Y) check for a 2x2 assuming the tile is in bottom-left
     bool CanPlace2x2(int CheckX, int CheckY)
     {
-        WorldGenerator.gridSpace[,] TempGrid = new WorldGenerator.gridSpace[grid.GetLength(0), grid.GetLength(1)];
-        System.Array.Copy(grid, TempGrid, grid.Length);
-
         int Counter = 0;
 
         for (int x = 0; x < 2; x++)
@@ -114,7 +113,6 @@ public class AssetPlacer
             {
                 if (grid[CheckX + x, CheckY + y] == WorldGenerator.gridSpace.empty)
                 {
-                    TempGrid[CheckX + x, CheckY + y] = WorldGenerator.gridSpace.used2x2;
                     Counter++;
                 }
             }
@@ -122,7 +120,13 @@ public class AssetPlacer
 
         if (Counter == 4)
         {
-            grid = TempGrid;
+            for (int x = 0; x < 2; x++)
+            {
+                for (int y = 0; y < 2; y++)
+                {
+                    grid[CheckX + x, CheckY + y] = WorldGenerator.gridSpace.used2x2;
+                }
+            }
             grid[CheckX, CheckY] = WorldGenerator.gridSpace.obj2x2;
             return true;
         }
