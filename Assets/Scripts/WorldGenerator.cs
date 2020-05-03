@@ -26,6 +26,7 @@ public class WorldGenerator : MonoBehaviour
 
         if (Clear)
         {
+            Clear = false;
             topMap.ClearAllTiles();
             botMap.ClearAllTiles();
             darkGrassMap.ClearAllTiles();
@@ -34,7 +35,6 @@ public class WorldGenerator : MonoBehaviour
             {
                 DestroyImmediate(obj);
             }
-            Clear = false;
         }
     }
 
