@@ -10,7 +10,7 @@ public class WorldGenerator : MonoBehaviour
 {
     public bool Generate; // Hacky. This is just to be able to preview things in the editor
     public bool Clear;
-    private List<GameObject> Allprefabs = null;
+    private List<GameObject> Allprefabs = new List<GameObject>();
 
     void Update()
     {
@@ -372,6 +372,8 @@ public class WorldGenerator : MonoBehaviour
                         break;
                     case GridHandler.gridSpace.obj1x1:
                         Allprefabs.Add(Instantiate(Tile1x1, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
+                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
+                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
                         break;
                 }
             }
