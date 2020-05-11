@@ -5,39 +5,9 @@ using UnityEngine.Tilemaps;
 using UnityEditor;
 using System.Diagnostics; // This is for the Stopwatch in Update()
 
-[ExecuteInEditMode]
+// [ExecuteInEditMode]
 public class WorldGenerator : MonoBehaviour
 {
-    public bool Generate; // Hacky. This is just to be able to preview things in the editor
-    public bool Clear;
-    private List<GameObject> Allprefabs = new List<GameObject>();
-
-    void Update()
-    {
-        if (Generate)
-        {
-            Stopwatch st = new Stopwatch(); // Start measuring how long it takes to generate a map. Will use later for optimiazations
-            Generate = false;
-            st.Start();
-            Start();
-            st.Stop();
-            UnityEngine.Debug.Log(string.Format("Generating took {0} ms to complete", st.ElapsedMilliseconds));
-        }
-
-        if (Clear)
-        {
-            Clear = false;
-            topMap.ClearAllTiles();
-            botMap.ClearAllTiles();
-            darkGrassMap.ClearAllTiles();
-            lightGrassMap.ClearAllTiles();
-            foreach (GameObject obj in Allprefabs)
-            {
-                DestroyImmediate(obj);
-            }
-        }
-    }
-
     Vector2 roomSizeWorldUnits = new Vector2(150, 150); // This is the size of the map
     float[,] noiseMap = new float[150, 150]; // This is where we keep the perlin noise. Used for adding grass
     float worldUnitsInOneGridCell = 1;
@@ -71,6 +41,9 @@ public class WorldGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Stopwatch st = new Stopwatch(); // Start measuring how long it takes to generate a map. Will use later for optimiazations
+        st.Start();
+
         Setup();
         CreateFloors();
 
@@ -83,6 +56,9 @@ public class WorldGenerator : MonoBehaviour
         AddBorders();
 
         SpawnLevel();
+
+        st.Stop();
+        UnityEngine.Debug.Log(string.Format("Generating took {0} ms to complete", st.ElapsedMilliseconds));
     }
 
     void Setup()
@@ -364,14 +340,14 @@ public class WorldGenerator : MonoBehaviour
                         topMap.SetTile(new Vector3Int(x, y, 0), errTile);
                         break;
                     case GridHandler.gridSpace.obj3x3:
-                        Allprefabs.Add(Instantiate(Tile3x3, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
+                        Instantiate(Tile3x3, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
                         // topMap.SetTile(new Vector3Int(x, y, 0), topTile);
                         break;
                     case GridHandler.gridSpace.obj2x2:
-                        Allprefabs.Add(Instantiate(Tile2x2, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
+                        Instantiate(Tile2x2, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
                         break;
                     case GridHandler.gridSpace.obj1x1:
-                        Allprefabs.Add(Instantiate(Tile1x1, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity));
+                        Instantiate(Tile1x1, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
                         darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
                         botMap.SetTile(new Vector3Int(x, y, 0), botTile);
                         break;
