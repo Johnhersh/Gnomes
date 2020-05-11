@@ -45841,8 +45841,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1ae19ce1ef71400688bea1208461580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Generate: 0
-  Clear: 0
   topMap: {fileID: 297851998}
   darkGrassMap: {fileID: 143002388}
   lightGrassMap: {fileID: 309582978}
