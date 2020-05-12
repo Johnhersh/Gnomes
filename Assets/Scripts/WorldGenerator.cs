@@ -341,7 +341,12 @@ public class WorldGenerator : MonoBehaviour
                         break;
                     case GridHandler.gridSpace.obj3x3:
                         Instantiate(Tile3x3, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
-                        // topMap.SetTile(new Vector3Int(x, y, 0), topTile);
+                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
+                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        break;
+                    case GridHandler.gridSpace.used3x3:
+                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
+                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
                         break;
                     case GridHandler.gridSpace.obj2x2:
                         Instantiate(Tile2x2, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
