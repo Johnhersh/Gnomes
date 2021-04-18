@@ -1,0 +1,35 @@
+{
+  "RoslynExtensionsOptions": {
+    "EnableAnalyzersSupport": true,
+    "LocationPaths": ["NuGet/microsoft.unity.analyzers.1.10.0/"]
+  },
+  "FormattingOptions": {
+    "enableEditorConfigSupport": true
+  },
+  "fileOptions": {
+    "systemExcludeSearchPatterns": [
+      "**/Library/**/*",
+      "**/Assets/Mirror/**/*",
+      "**/Assets/ParrelSync/**/*",
+      "/Assets/Mirror/**/*",
+      "/Mirror.csproj",
+      "/ParrelSync.csproj"
+    ],
+    "excludeSearchPatterns": [
+      "**/Library/**/*",
+      "**/Assets/Mirror/**/*",
+      "**/Assets/ParrelSync/**/*",
+      "/Assets/Mirror/**/*",
+      "/Mirror.csproj",
+      "/ParrelSync.csproj"
+    ],
+    "userExcludeSearchPatterns": [
+      "**/Library/**/*",
+      "**/Assets/Mirror/**/*",
+      "**/Assets/ParrelSync/**/*",
+      "/Assets/Mirror/**/*",
+      "/Mirror.csproj",
+      "/ParrelSync.csproj"
+    ]
+  }
+}
