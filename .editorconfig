@@ -1,0 +1,53 @@
+root=true
+
+[Assets/Plugins/**.cs]
+generated_code = true
+
+[Assets/Mirror/**.cs]
+generated_code = true
+
+[Assets/ParrelSync/**.cs]
+generated_code = true
+
+[Assets/VSCode/**.cs]
+generated_code = true
+
+[Assets/Scripts/InputMaster.cs]
+generated_code = true
+
+[*.cs]
+# Private fields should be camel case and have an underscore prefix
+dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields
+dotnet_naming_rule.private_members_with_underscore.style    = prefix_underscore
+dotnet_naming_rule.private_members_with_underscore.severity = suggestion
+
+dotnet_naming_symbols.private_fields.applicable_kinds           = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+dotnet_naming_style.prefix_underscore.required_prefix = _
+
+# Constants are PascalCase
+dotnet_naming_rule.constants_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.constants_should_be_pascal_case.symbols = constants
+dotnet_naming_rule.constants_should_be_pascal_case.style = constant_style
+
+dotnet_naming_symbols.constants.applicable_kinds = field, local
+dotnet_naming_symbols.constants.required_modifiers = const
+
+dotnet_naming_style.constant_style.capitalization = pascal_case
+
+#Disable warning for making a new Vector3
+dotnet_diagnostic.IDE0090.severity = none
+
+#Make private fields naming mandatory
+dotnet_diagnostic.IDE1006.severity = error
+
+#Unused using statements
+dotnet_diagnostic.IDE0005.severity = suggestion
+
+#PreferenceItem warning
+dotnet_diagnostic.CS0618.severity = none
+
+#Simplify "new" expression
+dotnet_diagnostic.IDE0090.severity = none

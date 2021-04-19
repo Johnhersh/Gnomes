@@ -1,26 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PositionRendererSorterStatic : MonoBehaviour
 {
-    [SerializeField]
-    private int sortingOrderBase = 5000;
-    [SerializeField]
-    private int offset = 0;
+    [SerializeField] private int _sortingOrderBase = 5000;
+    [SerializeField] private int _offset = 0;
 
-    private Renderer myRenderer;
+    private Renderer _myRenderer;
 
     // Start is called before the first frame update
     void Start()
     {
-        myRenderer = gameObject.GetComponent<Renderer>();
-        myRenderer.sortingOrder = (int)( sortingOrderBase - transform.position.y - offset );
+        _myRenderer = gameObject.GetComponent<Renderer>();
+        _myRenderer.sortingOrder = (int)(_sortingOrderBase - transform.position.y - _offset);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

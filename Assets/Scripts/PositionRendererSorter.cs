@@ -1,27 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PositionRendererSorter : MonoBehaviour
 {
-    [SerializeField]
-    private int sortingOrderBase = 5000;
-    [SerializeField]
-    private int offset = 0;
-    [SerializeField]
-    private bool runOnlyOnce = false;
+    [SerializeField] private int _sortingOrderBase = 5000;
+    [SerializeField] private int _offset = 0;
+    [SerializeField] private bool _runOnlyOnce = false;
 
-    private Renderer myRenderer;
+    private Renderer _myRenderer;
 
     private void Awake()
     {
-        myRenderer = gameObject.GetComponent<Renderer>();
+        _myRenderer = gameObject.GetComponent<Renderer>();
     }
 
     void LateUpdate()
     {
-        myRenderer.sortingOrder = (int)(sortingOrderBase - transform.position.y - offset);
-        if (runOnlyOnce)
+        _myRenderer.sortingOrder = (int)(_sortingOrderBase - transform.position.y - _offset);
+        if (_runOnlyOnce)
         {
             Destroy(this);
         }
