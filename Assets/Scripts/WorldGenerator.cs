@@ -6,26 +6,27 @@ using System.Diagnostics; // This is for the Stopwatch in Update()
 // [ExecuteInEditMode]
 public class WorldGenerator : MonoBehaviour
 {
-    Vector2 _roomSizeWorldUnits = new Vector2(150, 150); // This is the size of the map
-    readonly float[,] _noiseMap = new float[150, 150]; // This is where we keep the perlin noise. Used for adding grass
-    const float WorldUnitsInOneGridCell = 1;
-    readonly GridHandler _newGrid = new GridHandler();
+    private Vector2 _roomSizeWorldUnits = new Vector2(150, 150); // This is the size of the map
+    private readonly float[,] _noiseMap = new float[150, 150]; // This is where we keep the perlin noise. Used for adding grass
+    private const float WorldUnitsInOneGridCell = 1;
+    private readonly GridHandler _newGrid = new GridHandler();
 
-    struct walker
+    private struct walker
     {
         public Vector2 dir;
         public Vector2 pos;
     }
-    List<walker> _walkers; // This will contain all our active walkers
-    const float ChanceWalkerChangeDir = 0.3f;
-    const float ChanceWalkerSpawn = 0.03f;
-    const float ChanceWalkerDestroy = 0.05f;
-    const int MaxWalkers = 12;
-    const float PercentToFill = 0.2f; //What percentage of the grid should be filled before we move on
 
-    ///////////////////////
-    // These are accessible via the editor:
-    ///////////////////////
+    private List<walker> _walkers; // This will contain all our active walkers
+    private const float ChanceWalkerChangeDir = 0.3f;
+    private const float ChanceWalkerSpawn = 0.03f;
+    private const float ChanceWalkerDestroy = 0.05f;
+    private const int MaxWalkers = 12;
+    private const float PercentToFill = 0.2f; //What percentage of the grid should be filled before we move on
+
+    /// <summary>
+    /// These are accessible via the editor:
+    /// </summary>
     public Tilemap topMap, darkGrassMap, lightGrassMap, botMap;
     public RuleTile topTile, darkGrassTile, lightGrassTile, botTile;
     public RuleTile errTile; //This tile is just used for debugging
@@ -36,7 +37,7 @@ public class WorldGenerator : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         Stopwatch st = new Stopwatch(); // Start measuring how long it takes to generate a map. Will use later for optimiazations
         st.Start();
@@ -48,7 +49,7 @@ public class WorldGenerator : MonoBehaviour
         FillHoles(); // After creating the base floor, I don't want to have empty cells
         FillHoles(); // Catch any newly created gaps
 
-        AddFirstGrassLayer();
+        AddGrass();
 
         AddBorders();
 
@@ -58,7 +59,7 @@ public class WorldGenerator : MonoBehaviour
         UnityEngine.Debug.Log(string.Format("Generating took {0} ms to complete", st.ElapsedMilliseconds));
     }
 
-    void Setup()
+    private void Setup()
     {
         _newGrid.SetupGrid();
 
@@ -92,7 +93,7 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    void CreateFloors()
+    private void CreateFloors()
     {
         int iterations = 0; // Just want to keep track of how many times we've looped so we don't get an infinite loop. This is just in case
         GridHandler.gridSpace floorTile = GridHandler.gridSpace.floor;
@@ -170,7 +171,7 @@ public class WorldGenerator : MonoBehaviour
         } while (iterations < 100000);
     }
 
-    void FillHoles()
+    private void FillHoles()
     {
         int fullSlotsCount = 0;
 
@@ -223,7 +224,11 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    void AddFirstGrassLayer()
+    /// <summary>
+    /// Find places where tiles should be grass
+    /// These are walkable tiles
+    /// </summary>
+    private void AddGrass()
     {
         //loop through every grid space. This is where we're adding the border grass
         for (int x = 0; x < _newGrid.roomWidth - 1; x++)
@@ -233,6 +238,15 @@ public class WorldGenerator : MonoBehaviour
                 //if we find a floor, check the spaces around it
                 if (_newGrid.GetTileType(x, y) == GridHandler.gridSpace.floor)
                 {
+                    if (_noiseMap[x, y] > 0.4f)
+                    {
+                        _newGrid.SetTile(x, y, GridHandler.gridSpace.lightGrass);
+                    }
+                    else if (_noiseMap[x, y] > 0.2f)
+                    {
+                        _newGrid.SetTile(x, y, GridHandler.gridSpace.darkGrass);
+                    }
+
                     //if any surrounding spaces are empty, make grass
                     if (_newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.empty)
                     {
@@ -258,28 +272,15 @@ public class WorldGenerator : MonoBehaviour
                         _newGrid.SetTile(x - 1, y, GridHandler.gridSpace.darkGrass);
                     }
                 }
-
-                // Add noise-based grass
-                if (_noiseMap[x, y] > 0.2f)
-                {
-                    if (_newGrid.GetTileType(x, y) == GridHandler.gridSpace.floor)
-                    { // I don't want to draw grass outside of the level area
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                    }
-                    // UnityEngine.Debug.Log("Found grass tile at: " + x + "," + y);
-                }
-                if (_noiseMap[x, y] > 0.4f)
-                {
-                    if (_newGrid.GetTileType(x, y) == GridHandler.gridSpace.floor)
-                    { // I don't want to draw grass outside of the level area
-                        lightGrassMap.SetTile(new Vector3Int(x, y, 0), lightGrassTile);
-                    }
-                }
             }
         }
     }
 
-    void AddBorders() // This is where we fill the bounding area with 1x1, 2x2 or 3x3 assets
+    /// <summary>
+    /// This is where we fill the bounding area with 1x1, 2x2 or 3x3 assets
+    /// These will have collision
+    /// </summary>
+    private void AddBorders()
     {
         AssetPlacer Placer = new AssetPlacer();
 
@@ -312,9 +313,11 @@ public class WorldGenerator : MonoBehaviour
 
 
 
+    /// <summary>
+    /// Check every cell, and spawn appropriate tile
+    /// </summary>
     void SpawnLevel()
     {
-        //Check every cell, and spawn appropriate tile
         for (int x = 0; x < _newGrid.roomWidth; x++)
         {
             for (int y = 0; y < _newGrid.roomHeight; y++)
@@ -329,6 +332,11 @@ public class WorldGenerator : MonoBehaviour
                     case GridHandler.gridSpace.darkGrass:
                         darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
                         botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        break;
+                    case GridHandler.gridSpace.lightGrass:
+                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
+                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        lightGrassMap.SetTile(new Vector3Int(x, y, 0), lightGrassTile);
                         break;
                     case GridHandler.gridSpace.wall:
                         topMap.SetTile(new Vector3Int(x, y, 0), topTile);

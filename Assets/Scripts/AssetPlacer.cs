@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class AssetPlacer
+﻿public class AssetPlacer
 {
     public GridHandler grid;
 
