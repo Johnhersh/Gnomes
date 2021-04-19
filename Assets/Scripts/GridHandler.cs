@@ -38,17 +38,6 @@ public class GridHandler
         return _grid[x, y];
     }
 
-    public int NumberOfFloors()
-    {
-        int count = 0;
-        foreach (gridSpace space in _grid)
-        {
-            if (space == gridSpace.floor)
-                count++;
-        }
-        return count;
-    }
-
     public float GetGridLength()
     {
         return (float)_grid.Length;

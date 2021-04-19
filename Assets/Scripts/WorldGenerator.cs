@@ -117,7 +117,9 @@ public class WorldGenerator : MonoBehaviour
     /// </summary>
     private void CreateFloors()
     {
+        UnityEngine.Profiling.Profiler.BeginSample("Create Floors");
         int iterations = 0; // Just want to keep track of how many times we've looped so we don't get an infinite loop. This is just in case
+        int numberOfFloors = 0;
         GridHandler.gridSpace floorTile = GridHandler.gridSpace.floor;
         do
         {
@@ -125,13 +127,20 @@ public class WorldGenerator : MonoBehaviour
             foreach (walker myWalker in _walkers)
             {
                 _newGrid.SetTile((int)myWalker.pos.x, (int)myWalker.pos.y, floorTile);
+                numberOfFloors++;
                 //Make the path 2 tiles thick:
                 //If we're moving up or down, also create the tile to the right of the path
                 if ((int)myWalker.dir.y != 0)
+                {
                     _newGrid.SetTile((int)myWalker.pos.x + 1, (int)myWalker.pos.y, floorTile);
+                    numberOfFloors++;
+                }
                 //If we're moving left or right, also create the tile to above the path
                 if ((int)myWalker.dir.x != 0)
+                {
                     _newGrid.SetTile((int)myWalker.pos.x, (int)myWalker.pos.y + 1, floorTile);
+                    numberOfFloors++;
+                }
             }
             //chance: destroy walker
             int numberChecks = _walkers.Count; //see how many walkers we have
@@ -185,12 +194,13 @@ public class WorldGenerator : MonoBehaviour
                 _walkers[i] = thisWalker;
             }
             //check if we want to exit the loop
-            if ((float)_newGrid.NumberOfFloors() / _newGrid.GetGridLength() > PercentToFill)
+            if (numberOfFloors / _newGrid.GetGridLength() > PercentToFill)
             {
                 break;
             }
             iterations++;
         } while (iterations < 100000);
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     private void FillHoles()
