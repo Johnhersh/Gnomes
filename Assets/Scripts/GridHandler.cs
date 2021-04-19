@@ -5,8 +5,8 @@ public class GridHandler
     public enum gridSpace { empty, floor, wall, darkGrass, lightGrass, err, obj3x3, obj2x2, obj1x1, used3x3, used2x2 };
     private gridSpace[,] _grid;
     public int roomHeight, roomWidth;
-    Vector2 _roomSizeWorldUnits = new Vector2(150, 150); // This is the size of the map
-    const float WorldUnitsInOneGridCell = 1;
+    private Vector2 _roomSizeWorldUnits = new Vector2(150, 150); // This is the size of the map
+    private const float WorldUnitsInOneGridCell = 1;
 
     public void SetupGrid()
     {
