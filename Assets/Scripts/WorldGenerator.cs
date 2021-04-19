@@ -53,7 +53,7 @@ public class WorldGenerator : MonoBehaviour
 
         AddBorders();
 
-        SpawnLevel();
+        SpawnLevelTiles();
 
         st.Stop();
         UnityEngine.Debug.Log(string.Format("Generating took {0} ms to complete", st.ElapsedMilliseconds));
@@ -316,7 +316,7 @@ public class WorldGenerator : MonoBehaviour
     /// <summary>
     /// Check every cell, and spawn appropriate tile
     /// </summary>
-    void SpawnLevel()
+    private void SpawnLevelTiles()
     {
         for (int x = 0; x < _newGrid.roomWidth; x++)
         {
@@ -372,9 +372,9 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    Vector2 RandomDirection()
+    private Vector2 RandomDirection()
     {
-        //pick a rando int between 0 and 3, representing the 4 directions we can travel
+        //pick a random int between 0 and 3, representing the 4 directions we can travel
         int choice = Mathf.FloorToInt(Random.value * 3.99f);
         //now let's return a direction
         switch (choice)
