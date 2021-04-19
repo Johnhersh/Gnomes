@@ -274,6 +274,37 @@ public class WorldGenerator : MonoBehaviour
                 }
             }
         }
+
+        CleanupLightGrass();
+    }
+
+    /// <summary>
+    /// Light grass shouldn't have single-file tiles
+    /// </summary>
+    private void CleanupLightGrass()
+    {
+        for (int x = 0; x < _newGrid.roomWidth - 1; x++)
+        {
+            for (int y = 0; y < _newGrid.roomHeight - 1; y++)
+            {
+                if (_newGrid.GetTileType(x, y) == GridHandler.gridSpace.lightGrass)
+                {
+                    bool isSingleVerticalFile = _newGrid.GetTileType(x + 1, y) == GridHandler.gridSpace.darkGrass &&
+                                        _newGrid.GetTileType(x - 1, y) == GridHandler.gridSpace.darkGrass;
+                    bool isSingleHorizontalFile = _newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.darkGrass &&
+                                        _newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.darkGrass;
+
+                    if (isSingleVerticalFile)
+                    {
+                        _newGrid.SetTile(x + 1, y, GridHandler.gridSpace.lightGrass);
+                    }
+                    if (isSingleHorizontalFile)
+                    {
+                        _newGrid.SetTile(x, y + 1, GridHandler.gridSpace.lightGrass);
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
