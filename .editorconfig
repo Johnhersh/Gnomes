@@ -37,6 +37,10 @@ dotnet_naming_symbols.constants.required_modifiers = const
 
 dotnet_naming_style.constant_style.capitalization = pascal_case
 
+# Modifier preferences
+dotnet_style_require_accessibility_modifiers = always
+dotnet_diagnostic.IDE0040.severity = suggestion
+
 #Disable warning for making a new Vector3
 dotnet_diagnostic.IDE0090.severity = none
 
