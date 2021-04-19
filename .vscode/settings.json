@@ -6,7 +6,6 @@
   "files.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,
-    "**/.gitignore": true,
     "**/.gitattributes": true,
     "**/.gitmodules": true,
     "**/.svn": true,
