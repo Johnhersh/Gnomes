@@ -40,23 +40,42 @@ public class WorldGenerator : MonoBehaviour
     private void Start()
     {
         Stopwatch st = new Stopwatch(); // Start measuring how long it takes to generate a map. Will use later for optimiazations
+        long elapsedTime;
         st.Start();
 
         Setup();
+        elapsedTime = st.ElapsedMilliseconds;
+        UnityEngine.Debug.Log($"Setup took: {st.ElapsedMilliseconds}ms");
+        st.Restart();
+
         CreateFloors();
+        elapsedTime += st.ElapsedMilliseconds;
+        UnityEngine.Debug.Log($"CreateFloors took: {st.ElapsedMilliseconds}ms");
+        st.Restart();
 
         // CreateWalls();
         FillHoles(); // After creating the base floor, I don't want to have empty cells
         FillHoles(); // Catch any newly created gaps
+        elapsedTime += st.ElapsedMilliseconds;
+        UnityEngine.Debug.Log($"FillHoles took: {st.ElapsedMilliseconds}ms");
+        st.Restart();
 
         AddGrass();
+        elapsedTime += st.ElapsedMilliseconds;
+        UnityEngine.Debug.Log($"AddGrass took: {st.ElapsedMilliseconds}ms");
+        st.Restart();
 
         AddBorders();
+        elapsedTime += st.ElapsedMilliseconds;
+        UnityEngine.Debug.Log($"AddBorders took: {st.ElapsedMilliseconds}ms");
+        st.Restart();
 
         SpawnLevelTiles();
+        elapsedTime += st.ElapsedMilliseconds;
+        UnityEngine.Debug.Log($"SpawnLevelTiles took: {st.ElapsedMilliseconds}ms");
 
         st.Stop();
-        UnityEngine.Debug.Log(string.Format("Generating took {0} ms to complete", st.ElapsedMilliseconds));
+        UnityEngine.Debug.Log($"Generating took {elapsedTime} ms to complete");
     }
 
     private void Setup()
@@ -93,6 +112,9 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Use walkers to create walkable areas
+    /// </summary>
     private void CreateFloors()
     {
         int iterations = 0; // Just want to keep track of how many times we've looped so we don't get an infinite loop. This is just in case
