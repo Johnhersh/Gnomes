@@ -374,70 +374,101 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-
-
     /// <summary>
     /// Check every cell, and spawn appropriate tile
     /// </summary>
     private void SpawnLevelTiles()
     {
+        Vector3Int[] botMapPositions = new Vector3Int[_newGrid.roomWidth * _newGrid.roomHeight];
+        TileBase[] botMapTileArray = new TileBase[botMapPositions.Length];
+
+        Vector3Int[] darkGrassMapPositions = new Vector3Int[_newGrid.roomWidth * _newGrid.roomHeight];
+        TileBase[] darkGrassMapTileArray = new TileBase[darkGrassMapPositions.Length];
+
+        Vector3Int[] topMapPositions = new Vector3Int[_newGrid.roomWidth * _newGrid.roomHeight];
+        TileBase[] topMapTileArray = new TileBase[botMapPositions.Length];
+
         for (int x = 0; x < _newGrid.roomWidth; x++)
         {
             for (int y = 0; y < _newGrid.roomHeight; y++)
             {
+                int index = x * _newGrid.roomWidth + y;
                 switch (_newGrid.GetTileType(x, y))
                 {
                     case GridHandler.gridSpace.empty:
                         break;
                     case GridHandler.gridSpace.floor:
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         break;
                     case GridHandler.gridSpace.darkGrass:
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        darkGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        darkGrassMapTileArray[index] = darkGrassTile;
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         break;
                     case GridHandler.gridSpace.lightGrass:
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        darkGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        darkGrassMapTileArray[index] = darkGrassTile;
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         lightGrassMap.SetTile(new Vector3Int(x, y, 0), lightGrassTile);
                         break;
                     case GridHandler.gridSpace.wall:
-                        topMap.SetTile(new Vector3Int(x, y, 0), topTile);
+                        topMapPositions[index] = new Vector3Int(x, y, 0);
+                        topMapTileArray[index] = topTile;
                         break;
                     case GridHandler.gridSpace.err:
-                        topMap.SetTile(new Vector3Int(x, y, 0), errTile);
+                        topMapPositions[index] = new Vector3Int(x, y, 0);
+                        topMapTileArray[index] = errTile;
                         break;
                     case GridHandler.gridSpace.obj3x3:
                         Instantiate(Tile3x3, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        darkGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        darkGrassMapTileArray[index] = darkGrassTile;
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         break;
                     case GridHandler.gridSpace.used3x3:
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        darkGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        darkGrassMapTileArray[index] = darkGrassTile;
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         break;
                     case GridHandler.gridSpace.obj2x2:
                         Instantiate(Tile2x2, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        darkGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        darkGrassMapTileArray[index] = darkGrassTile;
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         break;
                     case GridHandler.gridSpace.used2x2:
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        darkGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        darkGrassMapTileArray[index] = darkGrassTile;
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         break;
                     case GridHandler.gridSpace.obj1x1:
                         Instantiate(Tile1x1, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
-                        darkGrassMap.SetTile(new Vector3Int(x, y, 0), darkGrassTile);
-                        botMap.SetTile(new Vector3Int(x, y, 0), botTile);
+                        darkGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        darkGrassMapTileArray[index] = darkGrassTile;
+                        botMapPositions[index] = new Vector3Int(x, y, 0);
+                        botMapTileArray[index] = botTile;
                         break;
                 }
             }
         }
+
+        topMap.SetTiles(topMapPositions, topMapTileArray);
+        botMap.SetTiles(botMapPositions, botMapTileArray);
+        darkGrassMap.SetTiles(darkGrassMapPositions, darkGrassMapTileArray);
     }
 
+    /// <summary>
+    /// Pick a random int between 0 and 3, representing the 4 directions we can travel
+    /// </summary>
     private Vector2 RandomDirection()
     {
-        //pick a random int between 0 and 3, representing the 4 directions we can travel
         int choice = Mathf.FloorToInt(Random.value * 3.99f);
         //now let's return a direction
         switch (choice)
