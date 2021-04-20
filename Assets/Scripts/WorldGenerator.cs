@@ -385,6 +385,9 @@ public class WorldGenerator : MonoBehaviour
         Vector3Int[] darkGrassMapPositions = new Vector3Int[_newGrid.roomWidth * _newGrid.roomHeight];
         TileBase[] darkGrassMapTileArray = new TileBase[darkGrassMapPositions.Length];
 
+        Vector3Int[] lightGrassMapPositions = new Vector3Int[_newGrid.roomWidth * _newGrid.roomHeight];
+        TileBase[] lightGrassMapTileArray = new TileBase[darkGrassMapPositions.Length];
+
         Vector3Int[] topMapPositions = new Vector3Int[_newGrid.roomWidth * _newGrid.roomHeight];
         TileBase[] topMapTileArray = new TileBase[botMapPositions.Length];
 
@@ -412,7 +415,8 @@ public class WorldGenerator : MonoBehaviour
                         darkGrassMapTileArray[index] = darkGrassTile;
                         botMapPositions[index] = new Vector3Int(x, y, 0);
                         botMapTileArray[index] = botTile;
-                        lightGrassMap.SetTile(new Vector3Int(x, y, 0), lightGrassTile);
+                        lightGrassMapPositions[index] = new Vector3Int(x, y, 0);
+                        lightGrassMapTileArray[index] = lightGrassTile;
                         break;
                     case GridHandler.gridSpace.wall:
                         topMapPositions[index] = new Vector3Int(x, y, 0);
@@ -462,6 +466,7 @@ public class WorldGenerator : MonoBehaviour
         topMap.SetTiles(topMapPositions, topMapTileArray);
         botMap.SetTiles(botMapPositions, botMapTileArray);
         darkGrassMap.SetTiles(darkGrassMapPositions, darkGrassMapTileArray);
+        lightGrassMap.SetTiles(lightGrassMapPositions, lightGrassMapTileArray);
     }
 
     /// <summary>
