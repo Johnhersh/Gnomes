@@ -55,3 +55,6 @@ dotnet_diagnostic.CS0618.severity = none
 
 #Simplify "new" expression
 dotnet_diagnostic.IDE0090.severity = none
+
+#Simplify object initialization
+#dotnet_diagnostic.IDE0017.severity = none

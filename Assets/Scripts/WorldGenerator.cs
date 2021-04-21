@@ -88,6 +88,8 @@ public class WorldGenerator : MonoBehaviour
         darkGrassMap.ClearAllTiles();
         lightGrassMap.ClearAllTiles();
 
+        GenerateNoisemap();
+
         //set first walker
         _walkers = new List<walker>(); // init list
         walker newWalker = new walker(); //create a walker
@@ -98,8 +100,13 @@ public class WorldGenerator : MonoBehaviour
         newWalker.pos = spawnPos;
         //add walker to our list
         _walkers.Add(newWalker);
+    }
 
-        //Generate noisemap
+    /// <summary>
+    /// Make a perlin noise map that we'll use later to randomize the map
+    /// </summary>
+    private void GenerateNoisemap()
+    {
         for (int xIndex = 0; xIndex < _newGrid.roomWidth; xIndex++)
         {
             for (int yIndex = 0; yIndex < _newGrid.roomHeight; yIndex++)
@@ -354,21 +361,33 @@ public class WorldGenerator : MonoBehaviour
         {
             for (int y = 0; y < _newGrid.roomHeight - 1; y++)
             {
-                //if we find a floor, check the spaces around it
-                if (_newGrid.GetTileType(x, y) == GridHandler.gridSpace.darkGrass)
+                var tileType = _newGrid.GetTileType(x, y);
+                if (tileType == GridHandler.gridSpace.darkGrass)
                 {
                     //if any surrounding spaces are empty, place a wall there
                     if (_newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.empty)
+                    {
                         Placer.FindLargestPossibleTile(_newGrid, x, y, 0, 1);
+                        _newGrid.SetTile(x, y + 1, GridHandler.gridSpace.wall);
+                    }
 
                     if (_newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.empty)
+                    {
                         Placer.FindLargestPossibleTile(_newGrid, x, y, 0, -1);
+                        _newGrid.SetTile(x, y - 1, GridHandler.gridSpace.wall);
+                    }
 
                     if (_newGrid.GetTileType(x + 1, y) == GridHandler.gridSpace.empty)
+                    {
                         Placer.FindLargestPossibleTile(_newGrid, x, y, 1, 0);
+                        _newGrid.SetTile(x + 1, y, GridHandler.gridSpace.wall);
+                    }
 
                     if (_newGrid.GetTileType(x - 1, y) == GridHandler.gridSpace.empty)
+                    {
                         Placer.FindLargestPossibleTile(_newGrid, x, y, -1, 0);
+                        _newGrid.SetTile(x - 1, y, GridHandler.gridSpace.wall);
+                    }
                 }
             }
         }
@@ -399,6 +418,8 @@ public class WorldGenerator : MonoBehaviour
                 switch (_newGrid.GetTileType(x, y))
                 {
                     case GridHandler.gridSpace.empty:
+                        topMapPositions[index] = new Vector3Int(x, y, 0);
+                        topMapTileArray[index] = topTile;
                         break;
                     case GridHandler.gridSpace.floor:
                         botMapPositions[index] = new Vector3Int(x, y, 0);
