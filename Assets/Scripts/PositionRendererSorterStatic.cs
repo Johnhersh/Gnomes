@@ -11,7 +11,7 @@ public class PositionRendererSorterStatic : MonoBehaviour
     void Start()
     {
         _myRenderer = gameObject.GetComponent<Renderer>();
-        _myRenderer.sortingOrder = (int)(_sortingOrderBase - transform.position.y - _offset);
+        _myRenderer.sortingOrder = (int)(_sortingOrderBase - transform.position.y + _offset);
     }
 
     // Update is called once per frame
