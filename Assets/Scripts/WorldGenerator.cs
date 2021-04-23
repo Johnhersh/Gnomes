@@ -367,26 +367,22 @@ public class WorldGenerator : MonoBehaviour
                     //if any surrounding spaces are empty, place a wall there
                     if (_newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.empty)
                     {
-                        Placer.FindLargestPossibleTile(_newGrid, x, y, 0, 1);
-                        _newGrid.SetTile(x, y + 1, GridHandler.gridSpace.wall);
+                        Placer.PlaceLargestPossibleTile(x, y, 0, 1);
                     }
 
                     if (_newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.empty)
                     {
-                        Placer.FindLargestPossibleTile(_newGrid, x, y, 0, -1);
-                        _newGrid.SetTile(x, y - 1, GridHandler.gridSpace.wall);
+                        Placer.PlaceLargestPossibleTile(x, y, 0, -1);
                     }
 
                     if (_newGrid.GetTileType(x + 1, y) == GridHandler.gridSpace.empty)
                     {
-                        Placer.FindLargestPossibleTile(_newGrid, x, y, 1, 0);
-                        _newGrid.SetTile(x + 1, y, GridHandler.gridSpace.wall);
+                        Placer.PlaceLargestPossibleTile(x, y, 1, 0);
                     }
 
                     if (_newGrid.GetTileType(x - 1, y) == GridHandler.gridSpace.empty)
                     {
-                        Placer.FindLargestPossibleTile(_newGrid, x, y, -1, 0);
-                        _newGrid.SetTile(x - 1, y, GridHandler.gridSpace.wall);
+                        Placer.PlaceLargestPossibleTile(x, y, -1, 0);
                     }
                 }
             }
@@ -418,8 +414,6 @@ public class WorldGenerator : MonoBehaviour
                 switch (_newGrid.GetTileType(x, y))
                 {
                     case GridHandler.gridSpace.empty:
-                        topMapPositions[index] = new Vector3Int(x, y, 0);
-                        topMapTileArray[index] = topTile;
                         break;
                     case GridHandler.gridSpace.floor:
                         botMapPositions[index] = new Vector3Int(x, y, 0);
@@ -459,6 +453,8 @@ public class WorldGenerator : MonoBehaviour
                         darkGrassMapTileArray[index] = darkGrassTile;
                         botMapPositions[index] = new Vector3Int(x, y, 0);
                         botMapTileArray[index] = botTile;
+                        topMapPositions[index] = new Vector3Int(x, y, 0);
+                        topMapTileArray[index] = topTile;
                         break;
                     case GridHandler.gridSpace.obj2x2:
                         Instantiate(Tile2x2, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);
@@ -472,6 +468,8 @@ public class WorldGenerator : MonoBehaviour
                         darkGrassMapTileArray[index] = darkGrassTile;
                         botMapPositions[index] = new Vector3Int(x, y, 0);
                         botMapTileArray[index] = botTile;
+                        topMapPositions[index] = new Vector3Int(x, y, 0);
+                        topMapTileArray[index] = topTile;
                         break;
                     case GridHandler.gridSpace.obj1x1:
                         Instantiate(Tile1x1, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity);

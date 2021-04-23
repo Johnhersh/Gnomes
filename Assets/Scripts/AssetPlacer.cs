@@ -2,7 +2,7 @@
 {
     public GridHandler grid;
 
-    public void FindLargestPossibleTile(GridHandler workGrid, int CheckX, int CheckY, int OffsetX, int OffsetY)
+    public void PlaceLargestPossibleTile(int CheckX, int CheckY, int OffsetX, int OffsetY)
     {
         // Search for a 3x3 first in a grid around the tile
 
@@ -67,9 +67,22 @@
         return;
     }
 
-    // Given an (X,Y) check for a 3x3 assuming the tile is in the middle
-    bool CanPlace3x3(int CheckX, int CheckY)
+    /// <summary>
+    /// Check if a given coordinate is out of bounds of the grid
+    /// </summary>
+    private bool isOutOfBounds(int CheckX, int CheckY)
     {
+        bool outOfBounds = CheckX >= grid.roomWidth - 1 || CheckY >= grid.roomHeight - 1 ||
+                            CheckX < 1 || CheckY < 1;
+
+        return outOfBounds;
+    }
+
+    // Given an (X,Y) check for a 3x3 assuming the tile is in the middle
+    private bool CanPlace3x3(int CheckX, int CheckY)
+    {
+        if (isOutOfBounds(CheckX, CheckY)) return false;
+
         int Counter = 0;
         for (int x = -1; x < 2; x++)
         {
@@ -101,6 +114,8 @@
     // Given an (X,Y) check for a 2x2 assuming the tile is in bottom-left
     bool CanPlace2x2(int CheckX, int CheckY)
     {
+        if (isOutOfBounds(CheckX, CheckY)) return false;
+
         int Counter = 0;
 
         for (int x = 0; x < 2; x++)

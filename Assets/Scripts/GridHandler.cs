@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class GridHandler
 {
@@ -33,9 +34,21 @@ public class GridHandler
         _grid[x, y] = type;
     }
 
+    /// <summary>
+    /// Get the type of tile in the given coordinate
+    /// </summary>
     public gridSpace GetTileType(int x, int y)
     {
-        return _grid[x, y];
+        try
+        {
+            return _grid[x, y];
+        }
+        catch (IndexOutOfRangeException e)  // CS0168
+        {
+            Debug.LogError(e.Message);
+            Debug.LogError($"Coords: ({x},{y})");
+            throw new ArgumentOutOfRangeException($"index parameter is out of range.", e);
+        }
     }
 
     public float GetGridLength()
