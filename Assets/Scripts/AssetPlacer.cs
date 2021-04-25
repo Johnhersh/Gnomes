@@ -4,6 +4,8 @@
 
     public void PlaceLargestPossibleTile(int CheckX, int CheckY, int OffsetX, int OffsetY)
     {
+        if (isOutOfBounds(CheckX + OffsetX, CheckY + OffsetY)) return;
+
         // Search for a 3x3 first in a grid around the tile
 
         // If no Y, then we need to search left/right of the tile
@@ -112,7 +114,7 @@
     }
 
     // Given an (X,Y) check for a 2x2 assuming the tile is in bottom-left
-    bool CanPlace2x2(int CheckX, int CheckY)
+    private bool CanPlace2x2(int CheckX, int CheckY)
     {
         if (isOutOfBounds(CheckX, CheckY)) return false;
 

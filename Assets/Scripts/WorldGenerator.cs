@@ -53,9 +53,7 @@ public class WorldGenerator : MonoBehaviour
         UnityEngine.Debug.Log($"CreateFloors took: {st.ElapsedMilliseconds}ms");
         st.Restart();
 
-        // CreateWalls();
         FillHoles(); // After creating the base floor, I don't want to have empty cells
-        FillHoles(); // Catch any newly created gaps
         elapsedTime += st.ElapsedMilliseconds;
         UnityEngine.Debug.Log($"FillHoles took: {st.ElapsedMilliseconds}ms");
         st.Restart();
@@ -68,6 +66,12 @@ public class WorldGenerator : MonoBehaviour
         AddBorders();
         elapsedTime += st.ElapsedMilliseconds;
         UnityEngine.Debug.Log($"AddBorders took: {st.ElapsedMilliseconds}ms");
+        st.Restart();
+
+        FillMap();
+        FillMap(); // Catch any newly created gaps
+        elapsedTime += st.ElapsedMilliseconds;
+        UnityEngine.Debug.Log($"FillMap took: {st.ElapsedMilliseconds}ms");
         st.Restart();
 
         SpawnLevelTiles();
@@ -364,7 +368,6 @@ public class WorldGenerator : MonoBehaviour
                 var tileType = _newGrid.GetTileType(x, y);
                 if (tileType == GridHandler.gridSpace.darkGrass)
                 {
-                    //if any surrounding spaces are empty, place a wall there
                     if (_newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.empty)
                     {
                         Placer.PlaceLargestPossibleTile(x, y, 0, 1);
@@ -384,6 +387,90 @@ public class WorldGenerator : MonoBehaviour
                     {
                         Placer.PlaceLargestPossibleTile(x, y, -1, 0);
                     }
+                }
+            }
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            ExpandBorders();
+        }
+    }
+
+    /// <summary>
+    /// After borders have been found, this will expand them outwards
+    /// </summary>
+    private void ExpandBorders()
+    {
+        AssetPlacer Placer = new AssetPlacer();
+
+        Placer.grid = _newGrid;
+
+        List<Vector2Int> emptyTiles = new List<Vector2Int>();
+
+        //loop through every grid space
+        for (int x = 1; x < _newGrid.roomWidth - 1; x++)
+        {
+            for (int y = 1; y < _newGrid.roomHeight - 1; y++)
+            {
+                var tileType = _newGrid.GetTileType(x, y);
+                bool isObject = tileType == GridHandler.gridSpace.used2x2 ||
+                                tileType == GridHandler.gridSpace.used3x3;
+
+                if (isObject)
+                {
+                    if (_newGrid.GetTileType(x, y + 1) == GridHandler.gridSpace.empty)
+                    {
+                        // Placer.PlaceLargestPossibleTile(x, y, 0, 1);
+                        emptyTiles.Add(new Vector2Int(x, y + 1));
+                    }
+
+                    if (_newGrid.GetTileType(x, y - 1) == GridHandler.gridSpace.empty)
+                    {
+                        // Placer.PlaceLargestPossibleTile(x, y, 0, -1);
+                        emptyTiles.Add(new Vector2Int(x, y - 1));
+                    }
+
+                    if (_newGrid.GetTileType(x + 1, y) == GridHandler.gridSpace.empty)
+                    {
+                        // Placer.PlaceLargestPossibleTile(x, y, 1, 0);
+                        emptyTiles.Add(new Vector2Int(x + 1, y));
+                    }
+
+                    if (_newGrid.GetTileType(x - 1, y) == GridHandler.gridSpace.empty)
+                    {
+                        // Placer.PlaceLargestPossibleTile(x, y, -1, 0);
+                        emptyTiles.Add(new Vector2Int(x - 1, y));
+                    }
+                }
+            }
+        }
+
+        foreach (var tile in emptyTiles)
+        {
+            Placer.PlaceLargestPossibleTile(tile.x, tile.y, 0, 0);
+        }
+    }
+
+    /// <summary>
+    /// Fills the rest of the map with objects
+    /// </summary>
+    private void FillMap()
+    {
+        AssetPlacer Placer = new AssetPlacer();
+
+        Placer.grid = _newGrid;
+
+        //loop through every grid space
+        for (int x = 1; x < _newGrid.roomWidth - 1; x++)
+        {
+            for (int y = 1; y < _newGrid.roomHeight - 1; y++)
+            {
+                var tileType = _newGrid.GetTileType(x, y);
+
+                if (tileType == GridHandler.gridSpace.empty)
+                {
+                    Placer.PlaceLargestPossibleTile(x, y, 0, 0);
                 }
             }
         }
