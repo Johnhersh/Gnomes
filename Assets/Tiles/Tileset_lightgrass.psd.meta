@@ -93,7 +93,7 @@ TextureImporter:
       213: -5558349829729604853
     second: Tileset_lightgrass_29
   externalObjects: {}
-  serializedVersion: 10
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -110,9 +110,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -122,8 +125,8 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: 0
-    aniso: -1
-    mipBias: -100
+    aniso: 1
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -144,9 +147,15 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -162,6 +171,30 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 1
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 1
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 1
     textureFormat: 4
@@ -815,9 +848,39 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      Tileset_lightgrass_0: 6553876986742543971
+      Tileset_lightgrass_1: -8143527539964597969
+      Tileset_lightgrass_10: -3319414348908904761
+      Tileset_lightgrass_11: 2052194309041739553
+      Tileset_lightgrass_12: 4563299142537662493
+      Tileset_lightgrass_13: 3384173360240027687
+      Tileset_lightgrass_14: -2456903214188463038
+      Tileset_lightgrass_15: -811249329037514936
+      Tileset_lightgrass_16: -3610306154601108402
+      Tileset_lightgrass_17: 4609352875316840304
+      Tileset_lightgrass_18: 8082673074381422589
+      Tileset_lightgrass_19: -7709479434525465955
+      Tileset_lightgrass_2: -5903480873932621082
+      Tileset_lightgrass_20: -7390266670090553177
+      Tileset_lightgrass_21: 9160537722445650330
+      Tileset_lightgrass_22: -4656071161812293493
+      Tileset_lightgrass_23: -8567800331956908658
+      Tileset_lightgrass_24: -1382856821921296839
+      Tileset_lightgrass_25: -7020440719520185017
+      Tileset_lightgrass_26: -527934248501066491
+      Tileset_lightgrass_27: -8753014820636966556
+      Tileset_lightgrass_28: -4202839417518625538
+      Tileset_lightgrass_29: -5558349829729604853
+      Tileset_lightgrass_3: 2966250673372006983
+      Tileset_lightgrass_4: -3273300497143506944
+      Tileset_lightgrass_5: 945179341082974275
+      Tileset_lightgrass_6: -7727481180280474203
+      Tileset_lightgrass_7: -1393235975880843817
+      Tileset_lightgrass_8: -4428174176233797710
+      Tileset_lightgrass_9: -3326501830340189089
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 1
-  pSDShowRemoveMatteOption: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 
